@@ -15,3 +15,7 @@ Run app locally for development
 ```shell
 npm run dev
 ```
+
+## Deployed app
+
+<https://next-any-shop-jpin730.vercel.app/>
