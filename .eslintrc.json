@@ -16,6 +16,7 @@
   },
   "plugins": ["react"],
   "rules": {
-    "no-console": ["error"]
+    "eqeqeq": ["error", "always"],
+    "no-console": "error"
   }
 }
