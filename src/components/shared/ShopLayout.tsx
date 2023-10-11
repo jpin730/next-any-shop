@@ -1,5 +1,6 @@
 import Head from 'next/head'
 import { type FC } from 'react'
+import { Navbar } from './Navbar'
 
 interface Props {
   title: string
@@ -27,7 +28,9 @@ export const ShopLayout: FC<Props> = ({
         <meta name="og:image" content={imageFullUrl ?? defaultImageUrl} />
       </Head>
 
-      <nav>{/* TODO: <Navbar /> */}</nav>
+      <nav>
+        <Navbar />
+      </nav>
 
       {/* TODO:  <SideMenu /> */}
 
