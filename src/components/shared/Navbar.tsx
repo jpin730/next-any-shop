@@ -24,7 +24,7 @@ export const Navbar: FC = () => {
             alignItems: 'center',
           }}
         >
-          <Link component={'span'} display="flex" alignItems="center">
+          <Link component="span" display="flex" alignItems="center">
             <Typography variant="h6">Any</Typography>
             <Typography variant="h6" fontWeight={300}>
               Shop
@@ -53,7 +53,7 @@ export const Navbar: FC = () => {
         </IconButton>
 
         <NextLink href="/cart">
-          <Link component={'span'}>
+          <Link component="span">
             <IconButton>
               <Badge badgeContent={2} color="secondary">
                 <ShoppingCart />

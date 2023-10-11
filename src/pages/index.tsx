@@ -1,4 +1,7 @@
+import { ProductList } from '@/components/products/ProductList'
 import { ShopLayout } from '@/components/shared/ShopLayout'
+import { initialData } from '@/database/data'
+import { type IProduct } from '@/interfaces/IProduct'
 import Typography from '@mui/material/Typography'
 import { type NextPage } from 'next'
 
@@ -8,12 +11,11 @@ const HomePage: NextPage = () => {
       title="Next Any Shop"
       pageDescription="Best product here in Any Shop"
     >
-      <Typography variant="h1" component="h1">
-        Shop
-      </Typography>
-      <Typography variant="h2" sx={{ mb: 1 }}>
+      <Typography variant="h2" sx={{ mb: 3 }}>
         All products
       </Typography>
+
+      <ProductList products={initialData.products as IProduct[]} />
     </ShopLayout>
   )
 }
