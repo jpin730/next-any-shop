@@ -14,7 +14,9 @@ export const ShopLayout: FC<Props> = ({
   pageDescription,
   imageFullUrl,
 }) => {
-  const defaultImageUrl = process.env.NEXT_PUBLIC_ORIGIN + '/favicon.ico'
+  const defaultImageUrl =
+    'https://next-any-shop-jpin730.vercel.app/og-image.png'
+
   return (
     <>
       <Head>
