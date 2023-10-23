@@ -15,7 +15,7 @@ import { type NextPage } from 'next'
 const CartPage: NextPage = () => {
   return (
     <ShopLayout title="Cart" pageDescription="Shopping cart">
-      <Typography variant="h1" component="h1" sx={{ mb: 3 }}>
+      <Typography variant="h1" sx={{ mb: 3 }}>
         Cart
       </Typography>
 

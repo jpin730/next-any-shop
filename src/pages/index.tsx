@@ -11,7 +11,7 @@ const HomePage: NextPage = () => {
       title="Next Any Shop"
       pageDescription="Best product here in Any Shop"
     >
-      <Typography variant="h2" sx={{ mb: 3 }}>
+      <Typography variant="h1" sx={{ mb: 3 }}>
         All products
       </Typography>
 

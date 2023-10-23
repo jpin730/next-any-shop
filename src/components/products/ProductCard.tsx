@@ -26,7 +26,7 @@ export const ProductCard: FC<Props> = ({ product }) => {
     <Grid
       item
       xs={6}
-      sm={4}
+      md={4}
       onMouseEnter={() => {
         setIsHovered(true)
       }}
