@@ -6,7 +6,7 @@ import { SideMenu } from './SideMenu'
 interface Props {
   title: string
   pageDescription: string
-  imageFullUrl?: string
+  ogImage?: string
   children: React.ReactNode
 }
 
@@ -14,10 +14,10 @@ export const ShopLayout: FC<Props> = ({
   children,
   title,
   pageDescription,
-  imageFullUrl,
+  ogImage,
 }) => {
-  const defaultImageUrl =
-    'https://next-any-shop-jpin730.vercel.app/og-image.png'
+  const origin = 'https://next-any-shop-jpin730.vercel.app'
+  const ogImageFullUrl = `${origin}/${ogImage ?? 'og-image.png'}`
 
   return (
     <>
@@ -26,7 +26,7 @@ export const ShopLayout: FC<Props> = ({
         <meta name="og:title" content={title} />
         <meta name="description" content={pageDescription} />
         <meta name="og:description" content={pageDescription} />
-        <meta name="og:image" content={imageFullUrl ?? defaultImageUrl} />
+        <meta name="og:image" content={ogImageFullUrl} />
       </Head>
 
       <nav>
