@@ -19,3 +19,7 @@ npm run dev
 ## Deployed app
 
 <https://next-any-shop-jpin730.vercel.app/>
+
+## API Reference
+
+<https://documenter.getpostman.com/view/12311811/2s9YRGwoRj>
