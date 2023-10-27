@@ -18,6 +18,7 @@ export default async function handler(
     await disconnect()
     res.status(200).json({ message: 'Data initialized successfully' })
   } catch (error) {
-    res.status(500).json({ message: 'Error on server' })
+    await disconnect()
+    res.status(500).json({ message: 'Server error' })
   }
 }

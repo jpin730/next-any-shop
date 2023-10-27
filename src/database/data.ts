@@ -1,6 +1,6 @@
 interface SeedProduct {
   description: string
-  gender: 'men' | 'women' | 'kid' | 'unisex'
+  gender: ValidGenders
   images: string[]
   inStock: number
   price: number
@@ -13,6 +13,7 @@ interface SeedProduct {
 
 type ValidSizes = 'XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL' | 'XXXL'
 type ValidTypes = 'shirts' | 'pants' | 'hoodies' | 'hats'
+type ValidGenders = 'men' | 'women' | 'kid' | 'unisex'
 
 interface SeedData {
   products: SeedProduct[]
@@ -700,3 +701,10 @@ export const initialData: SeedData = {
     },
   ],
 }
+
+export const SHOP_CONSTANTS = {
+  validGenders: ['men', 'women', 'kid', 'unisex'] as ValidGenders[],
+}
+
+export const isValidGender = (value: string): boolean =>
+  SHOP_CONSTANTS.validGenders.includes(value as ValidGenders)
