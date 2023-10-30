@@ -6,6 +6,7 @@ import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
 import Link from '@mui/material/Link'
 import Search from '@mui/icons-material/Search'
+import Menu from '@mui/icons-material/Menu'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import ShoppingCart from '@mui/icons-material/ShoppingCart'
@@ -85,13 +86,13 @@ export const Navbar: FC = () => {
           </Link>
         </NextLink>
 
-        <Button
+        <IconButton
           onClick={() => {
             toggleSideMenu()
           }}
         >
-          Menu
-        </Button>
+          <Menu />
+        </IconButton>
       </Toolbar>
     </AppBar>
   )

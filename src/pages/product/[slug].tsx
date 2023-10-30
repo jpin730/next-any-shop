@@ -3,13 +3,18 @@ import { SizeSelector } from '@/components/products/SIzeSelector'
 import { ItemCounter } from '@/components/shared/ItemCounter'
 import { ShopLayout } from '@/components/shared/ShopLayout'
 import { initialData } from '@/database/data'
+import { type IProduct } from '@/interfaces/IProduct'
 import { toCurrency } from '@/utils/toCurrency'
 import { Box, Button, Chip, Grid, Typography } from '@mui/material'
 import { type NextPage } from 'next'
 
 const product = initialData.products[0]
 
-const ProductPage: NextPage = () => {
+interface Props {
+  product: IProduct
+}
+
+const ProductPage: NextPage<Props> = () => {
   return (
     <ShopLayout
       title={product.title}

@@ -36,7 +36,7 @@ export const ProductCard: FC<Props> = ({ product }) => {
       }}
     >
       <Card>
-        <NextLink href="/product/slug" prefetch={false}>
+        <NextLink href={`/product/${product.slug}`} prefetch={false}>
           <Link component="span">
             <CardActionArea>
               <CardMedia
