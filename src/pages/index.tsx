@@ -1,11 +1,13 @@
 import { ProductList } from '@/components/products/ProductList'
+import { FullScreenLoading } from '@/components/shared/FullScreenLoading'
 import { ShopLayout } from '@/components/shared/ShopLayout'
-import { initialData } from '@/database/data'
-import { type IProduct } from '@/interfaces/IProduct'
+import { useProducts } from '@/hooks/useProducts'
 import Typography from '@mui/material/Typography'
 import { type NextPage } from 'next'
 
 const HomePage: NextPage = () => {
+  const { products, isLoading } = useProducts('/products')
+
   return (
     <ShopLayout
       title="Next Any Shop"
@@ -15,7 +17,7 @@ const HomePage: NextPage = () => {
         All products
       </Typography>
 
-      <ProductList products={initialData.products as IProduct[]} />
+      {isLoading ? <FullScreenLoading /> : <ProductList products={products} />}
     </ShopLayout>
   )
 }
