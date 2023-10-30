@@ -8,19 +8,24 @@ import type { AppProps } from 'next/app'
 import { CssBaseline, ThemeProvider } from '@mui/material'
 import { lightTheme } from '@/themes'
 import { SWRConfig } from 'swr'
+import { SharedProvider } from '@/context/shared/SharedProvider'
 
 export default function App({ Component, pageProps }: AppProps): JSX.Element {
   return (
     <SWRConfig
       value={{
-        fetcher: async (resource, init) =>
-          await fetch(resource, init).then(async (res) => await res.json()),
+        // eslint-disable-next-line @typescript-eslint/promise-function-async
+        fetcher: (resource, init) =>
+          // eslint-disable-next-line @typescript-eslint/promise-function-async
+          fetch(resource, init).then((res) => res.json()),
       }}
     >
-      <ThemeProvider theme={lightTheme}>
-        <CssBaseline />
-        <Component {...pageProps} />
-      </ThemeProvider>
+      <SharedProvider>
+        <ThemeProvider theme={lightTheme}>
+          <CssBaseline />
+          <Component {...pageProps} />
+        </ThemeProvider>
+      </SharedProvider>
     </SWRConfig>
   )
 }

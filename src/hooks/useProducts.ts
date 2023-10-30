@@ -14,7 +14,7 @@ export const useProducts = (
   const { data, error, isLoading } = useSWR<IProduct[]>(`/api${url}`, config)
 
   return {
-    products: data ?? [],
+    products: Array.isArray(data) ? data : [],
     isLoading,
     error,
   }

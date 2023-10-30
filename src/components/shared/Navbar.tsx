@@ -9,9 +9,34 @@ import Search from '@mui/icons-material/Search'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import ShoppingCart from '@mui/icons-material/ShoppingCart'
-import { type FC } from 'react'
+import { useContext, type FC } from 'react'
+import { useRouter } from 'next/router'
+import { SharedContext } from '@/context/shared/SharedProvider'
+
+interface NavItem {
+  text: string
+  path: string
+}
 
 export const Navbar: FC = () => {
+  const { toggleSideMenu } = useContext(SharedContext)
+  const { asPath } = useRouter()
+
+  const navItems: NavItem[] = [
+    {
+      text: 'Men',
+      path: '/category/men',
+    },
+    {
+      text: 'Women',
+      path: '/category/women',
+    },
+    {
+      text: 'Kids',
+      path: '/category/kids',
+    },
+  ]
+
   return (
     <AppBar>
       <Toolbar>
@@ -35,15 +60,13 @@ export const Navbar: FC = () => {
         <Box flex={1} />
 
         <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-          <NextLink href="/category/men">
-            <Button>Men</Button>
-          </NextLink>
-          <NextLink href="/category/women">
-            <Button>Women</Button>
-          </NextLink>
-          <NextLink href="/category/kids">
-            <Button>Kids</Button>
-          </NextLink>
+          {navItems.map(({ text, path }) => (
+            <NextLink href={path} key={path}>
+              <Button color={path === asPath ? 'primary' : undefined}>
+                {text}
+              </Button>
+            </NextLink>
+          ))}
         </Box>
 
         <Box flex={1} />
@@ -62,7 +85,13 @@ export const Navbar: FC = () => {
           </Link>
         </NextLink>
 
-        <Button>Menu</Button>
+        <Button
+          onClick={() => {
+            toggleSideMenu()
+          }}
+        >
+          Menu
+        </Button>
       </Toolbar>
     </AppBar>
   )

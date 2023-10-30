@@ -1,4 +1,4 @@
-import { type FC } from 'react'
+import { useContext, type FC, type ReactNode } from 'react'
 import AccountCircle from '@mui/icons-material/AccountCircle'
 import AdminPanelSettings from '@mui/icons-material/AdminPanelSettings'
 import Box from '@mui/material/Box'
@@ -21,13 +21,84 @@ import Login from '@mui/icons-material/Login'
 import Male from '@mui/icons-material/Male'
 import Search from '@mui/icons-material/Search'
 import VpnKey from '@mui/icons-material/VpnKey'
+import { useRouter } from 'next/router'
+import { SharedContext } from '@/context/shared/SharedProvider'
+
+interface NavItem {
+  text: string
+  icon?: ReactNode
+  path?: string
+  responsive?: true
+  subheader?: true
+}
 
 export const SideMenu: FC = () => {
+  const router = useRouter()
+  const { isMenuOpen, toggleSideMenu } = useContext(SharedContext)
+
+  const navItems: NavItem[] = [
+    {
+      text: 'Profile',
+      icon: <AccountCircle />,
+    },
+    {
+      text: 'My orders',
+      icon: <ConfirmationNumber />,
+    },
+    {
+      text: 'Men',
+      path: '/category/men',
+      icon: <Male />,
+      responsive: true,
+    },
+    {
+      text: 'Women',
+      path: '/category/women',
+      icon: <Female />,
+      responsive: true,
+    },
+    {
+      text: 'Kids',
+      path: '/category/kids',
+      icon: <EscalatorWarning />,
+      responsive: true,
+    },
+    {
+      text: 'Login',
+      icon: <VpnKey />,
+    },
+    {
+      text: 'Logout',
+      icon: <Login />,
+    },
+    {
+      text: 'Admin Panel',
+      subheader: true,
+    },
+    {
+      text: 'Products',
+      icon: <Category />,
+    },
+    {
+      text: 'Orders',
+      icon: <ConfirmationNumber />,
+    },
+    {
+      text: 'Users',
+      icon: <AdminPanelSettings />,
+    },
+  ]
+
+  const navigateTo = (url: string): void => {
+    toggleSideMenu()
+    void router.push(url)
+  }
   return (
     <Drawer
-      open={false}
+      open={isMenuOpen}
       anchor="right"
       sx={{ backdropFilter: 'blur(4px)', transition: 'all 0.5s ease-out' }}
+      onClose={toggleSideMenu}
     >
       <Box sx={{ width: 250, paddingTop: 5 }}>
         <List>
@@ -45,77 +116,25 @@ export const SideMenu: FC = () => {
             />
           </ListItem>
 
-          <ListItemButton>
-            <ListItemIcon>
-              <AccountCircle />
-            </ListItemIcon>
-            <ListItemText primary={'Profile'} />
-          </ListItemButton>
-
-          <ListItemButton>
-            <ListItemIcon>
-              <ConfirmationNumber />
-            </ListItemIcon>
-            <ListItemText primary={'My orders'} />
-          </ListItemButton>
-
-          <ListItemButton sx={{ display: { xs: '', sm: 'none' } }}>
-            <ListItemIcon>
-              <Male />
-            </ListItemIcon>
-            <ListItemText primary={'Men'} />
-          </ListItemButton>
-
-          <ListItemButton sx={{ display: { xs: '', sm: 'none' } }}>
-            <ListItemIcon>
-              <Female />
-            </ListItemIcon>
-            <ListItemText primary={'Women'} />
-          </ListItemButton>
-
-          <ListItemButton sx={{ display: { xs: '', sm: 'none' } }}>
-            <ListItemIcon>
-              <EscalatorWarning />
-            </ListItemIcon>
-            <ListItemText primary={'Kids'} />
-          </ListItemButton>
-
-          <ListItemButton>
-            <ListItemIcon>
-              <VpnKey />
-            </ListItemIcon>
-            <ListItemText primary={'Login'} />
-          </ListItemButton>
-
-          <ListItemButton>
-            <ListItemIcon>
-              <Login />
-            </ListItemIcon>
-            <ListItemText primary={'Logout'} />
-          </ListItemButton>
-
-          <Divider />
-          <ListSubheader>Admin Panel</ListSubheader>
-
-          <ListItemButton>
-            <ListItemIcon>
-              <Category />
-            </ListItemIcon>
-            <ListItemText primary={'Products'} />
-          </ListItemButton>
-          <ListItemButton>
-            <ListItemIcon>
-              <ConfirmationNumber />
-            </ListItemIcon>
-            <ListItemText primary={'Orders'} />
-          </ListItemButton>
-
-          <ListItemButton>
-            <ListItemIcon>
-              <AdminPanelSettings />
-            </ListItemIcon>
-            <ListItemText primary={'Users'} />
-          </ListItemButton>
+          {navItems.map(({ icon, text, path, responsive, subheader }) =>
+            subheader === true ? (
+              <div key={text}>
+                <Divider />
+                <ListSubheader>{text}</ListSubheader>
+              </div>
+            ) : (
+              <ListItemButton
+                key={text}
+                sx={responsive && { display: { xs: '', sm: 'none' } }}
+                onClick={() => {
+                  path !== undefined && navigateTo(path)
+                }}
+              >
+                <ListItemIcon>{icon}</ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItemButton>
+            ),
+          )}
         </List>
       </Box>
     </Drawer>
