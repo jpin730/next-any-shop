@@ -5,38 +5,48 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
 import Link from '@mui/material/Link'
-import Search from '@mui/icons-material/Search'
+import SearchOutlined from '@mui/icons-material/SearchOutlined'
+import ClearOutlined from '@mui/icons-material/ClearOutlined'
 import Menu from '@mui/icons-material/Menu'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import ShoppingCart from '@mui/icons-material/ShoppingCart'
-import { useContext, type FC } from 'react'
+import { useContext, type FC, useState } from 'react'
 import { useRouter } from 'next/router'
 import { SharedContext } from '@/context/shared/SharedProvider'
+import { Input, InputAdornment } from '@mui/material'
 
 interface NavItem {
   text: string
   path: string
 }
 
+const navItems: NavItem[] = [
+  {
+    text: 'Men',
+    path: '/category/men',
+  },
+  {
+    text: 'Women',
+    path: '/category/women',
+  },
+  {
+    text: 'Kids',
+    path: '/category/kids',
+  },
+]
+
 export const Navbar: FC = () => {
   const { toggleSideMenu } = useContext(SharedContext)
-  const { asPath } = useRouter()
+  const { asPath, push } = useRouter()
+  const [searchTerm, setSearchTerm] = useState('')
+  const [isSearchVisible, setIsSearchVisible] = useState(false)
 
-  const navItems: NavItem[] = [
-    {
-      text: 'Men',
-      path: '/category/men',
-    },
-    {
-      text: 'Women',
-      path: '/category/women',
-    },
-    {
-      text: 'Kids',
-      path: '/category/kids',
-    },
-  ]
+  const onSearchTerm = (): void => {
+    const searchTermTrimmed = searchTerm.trim()
+    if (searchTermTrimmed.length === 0) return
+    void push(`/search?q=${searchTermTrimmed}`)
+  }
 
   return (
     <AppBar>
@@ -60,7 +70,12 @@ export const Navbar: FC = () => {
 
         <Box flex={1} />
 
-        <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+        <Box
+          sx={{
+            display: isSearchVisible ? 'none' : { xs: 'none', sm: 'block' },
+          }}
+          className="fadeIn"
+        >
           {navItems.map(({ text, path }) => (
             <NextLink href={path} key={path}>
               <Button color={path === asPath ? 'primary' : undefined}>
@@ -72,8 +87,49 @@ export const Navbar: FC = () => {
 
         <Box flex={1} />
 
-        <IconButton>
-          <Search />
+        {isSearchVisible ? (
+          <Input
+            autoFocus
+            sx={{ display: { xs: 'none', sm: 'flex' } }}
+            className="fadeIn"
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value)
+            }}
+            onKeyUp={(e) => {
+              e.key === 'Enter' && onSearchTerm()
+            }}
+            type="text"
+            placeholder="Search..."
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={() => {
+                    setIsSearchVisible(false)
+                  }}
+                >
+                  <ClearOutlined />
+                </IconButton>
+              </InputAdornment>
+            }
+          />
+        ) : (
+          <IconButton
+            onClick={() => {
+              setIsSearchVisible(true)
+            }}
+            className="fadeIn"
+            sx={{ display: { xs: 'none', sm: 'flex' } }}
+          >
+            <SearchOutlined />
+          </IconButton>
+        )}
+
+        <IconButton
+          sx={{ display: { xs: 'flex', sm: 'none' } }}
+          onClick={toggleSideMenu}
+        >
+          <SearchOutlined />
         </IconButton>
 
         <NextLink href="/cart">

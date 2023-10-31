@@ -1,4 +1,4 @@
-import { useContext, type FC, type ReactNode } from 'react'
+import { useContext, type FC, type ReactNode, useState } from 'react'
 import AccountCircle from '@mui/icons-material/AccountCircle'
 import AdminPanelSettings from '@mui/icons-material/AdminPanelSettings'
 import Box from '@mui/material/Box'
@@ -32,67 +32,75 @@ interface NavItem {
   subheader?: true
 }
 
+const navItems: NavItem[] = [
+  {
+    text: 'Profile',
+    icon: <AccountCircle />,
+  },
+  {
+    text: 'My orders',
+    icon: <ConfirmationNumber />,
+  },
+  {
+    text: 'Men',
+    path: '/category/men',
+    icon: <Male />,
+    responsive: true,
+  },
+  {
+    text: 'Women',
+    path: '/category/women',
+    icon: <Female />,
+    responsive: true,
+  },
+  {
+    text: 'Kids',
+    path: '/category/kids',
+    icon: <EscalatorWarning />,
+    responsive: true,
+  },
+  {
+    text: 'Login',
+    icon: <VpnKey />,
+  },
+  {
+    text: 'Logout',
+    icon: <Logout />,
+  },
+  {
+    text: 'Admin Panel',
+    subheader: true,
+  },
+  {
+    text: 'Products',
+    icon: <Category />,
+  },
+  {
+    text: 'Orders',
+    icon: <ConfirmationNumber />,
+  },
+  {
+    text: 'Users',
+    icon: <AdminPanelSettings />,
+  },
+]
+
 export const SideMenu: FC = () => {
   const router = useRouter()
   const { isMenuOpen, toggleSideMenu } = useContext(SharedContext)
-
-  const navItems: NavItem[] = [
-    {
-      text: 'Profile',
-      icon: <AccountCircle />,
-    },
-    {
-      text: 'My orders',
-      icon: <ConfirmationNumber />,
-    },
-    {
-      text: 'Men',
-      path: '/category/men',
-      icon: <Male />,
-      responsive: true,
-    },
-    {
-      text: 'Women',
-      path: '/category/women',
-      icon: <Female />,
-      responsive: true,
-    },
-    {
-      text: 'Kids',
-      path: '/category/kids',
-      icon: <EscalatorWarning />,
-      responsive: true,
-    },
-    {
-      text: 'Login',
-      icon: <VpnKey />,
-    },
-    {
-      text: 'Logout',
-      icon: <Logout />,
-    },
-    {
-      text: 'Admin Panel',
-      subheader: true,
-    },
-    {
-      text: 'Products',
-      icon: <Category />,
-    },
-    {
-      text: 'Orders',
-      icon: <ConfirmationNumber />,
-    },
-    {
-      text: 'Users',
-      icon: <AdminPanelSettings />,
-    },
-  ]
+  const [searchTerm, setSearchTerm] = useState('')
 
   const navigateTo = (url: string): void => {
     toggleSideMenu()
     void router.push(url)
   }
+
+  const onSearchTerm = (): void => {
+    const searchTermTrimmed = searchTerm.trim()
+    if (searchTermTrimmed.length === 0) return
+    navigateTo(`/search?q=${searchTermTrimmed}`)
+  }
+
   return (
     <Drawer
       open={isMenuOpen}
@@ -104,11 +112,19 @@ export const SideMenu: FC = () => {
         <List>
           <ListItem>
             <Input
+              autoFocus
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value)
+              }}
+              onKeyUp={(e) => {
+                e.key === 'Enter' && onSearchTerm()
+              }}
               type="text"
               placeholder="Search..."
               endAdornment={
                 <InputAdornment position="end">
-                  <IconButton aria-label="toggle password visibility">
+                  <IconButton onClick={onSearchTerm}>
                     <Search />
                   </IconButton>
                 </InputAdornment>
