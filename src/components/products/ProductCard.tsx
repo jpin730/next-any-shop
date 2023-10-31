@@ -1,5 +1,6 @@
 import { type IProduct } from '@/interfaces/IProduct'
 import { toCurrency } from '@/utils/toCurrency'
+import Chip from '@mui/material/Chip'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import CardActionArea from '@mui/material/CardActionArea'
@@ -38,6 +39,18 @@ export const ProductCard: FC<Props> = ({ product }) => {
         <NextLink href={`/product/${product.slug}`} prefetch={false}>
           <Link component="span">
             <CardActionArea>
+              {product.inStock === 0 && (
+                <Chip
+                  color="primary"
+                  label="No available"
+                  sx={{
+                    position: 'absolute',
+                    zIndex: 99,
+                    top: '10px',
+                    left: '10px',
+                  }}
+                />
+              )}
               <CardMedia
                 component="img"
                 className="fadeIn"
