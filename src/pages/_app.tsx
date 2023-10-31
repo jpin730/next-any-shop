@@ -9,6 +9,7 @@ import { CssBaseline, ThemeProvider } from '@mui/material'
 import { lightTheme } from '@/themes'
 import { SWRConfig } from 'swr'
 import { SharedProvider } from '@/context/shared/SharedProvider'
+import { CartProvider } from '@/context/cart/CartProvider'
 
 export default function App({ Component, pageProps }: AppProps): JSX.Element {
   return (
@@ -21,10 +22,12 @@ export default function App({ Component, pageProps }: AppProps): JSX.Element {
       }}
     >
       <SharedProvider>
-        <ThemeProvider theme={lightTheme}>
-          <CssBaseline />
-          <Component {...pageProps} />
-        </ThemeProvider>
+        <CartProvider>
+          <ThemeProvider theme={lightTheme}>
+            <CssBaseline />
+            <Component {...pageProps} />
+          </ThemeProvider>
+        </CartProvider>
       </SharedProvider>
     </SWRConfig>
   )
