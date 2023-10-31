@@ -1,16 +1,20 @@
 import { createTheme } from '@mui/material/styles'
 
+const primaryMain = '#1e1e1e'
+const secondaryMain = '#3a64d8'
+const infoMain = '#fff'
+
 export const lightTheme = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: '#1e1e1e',
+      main: primaryMain,
     },
     secondary: {
-      main: '#3a64d8',
+      main: secondaryMain,
     },
     info: {
-      main: '#fff',
+      main: infoMain,
     },
   },
   components: {
@@ -62,6 +66,11 @@ export const lightTheme = createTheme({
           ':hover': {
             backgroundColor: 'rgba(0,0,0,0.05)',
             transition: 'all 0.3s ease-in-out',
+          },
+        },
+        containedPrimary: {
+          ':hover': {
+            backgroundColor: primaryMain,
           },
         },
       },

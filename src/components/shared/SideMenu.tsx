@@ -17,7 +17,7 @@ import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import ListSubheader from '@mui/material/ListSubheader'
-import Login from '@mui/icons-material/Login'
+import Logout from '@mui/icons-material/Logout'
 import Male from '@mui/icons-material/Male'
 import Search from '@mui/icons-material/Search'
 import VpnKey from '@mui/icons-material/VpnKey'
@@ -69,7 +69,7 @@ export const SideMenu: FC = () => {
     },
     {
       text: 'Logout',
-      icon: <Login />,
+      icon: <Logout />,
     },
     {
       text: 'Admin Panel',
