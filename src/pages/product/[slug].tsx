@@ -16,6 +16,8 @@ import { type GetStaticPaths, type GetStaticProps, type NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useContext, useState } from 'react'
 
+const MaxValuePerProduct = 10
+
 interface Props {
   product: IProduct
 }
@@ -41,12 +43,12 @@ const ProductPage: NextPage<Props> = ({ product }) => {
     }))
   }
 
-  // const onUpdateQuantity = (quantity: number): void => {
-  //   setTempCartProduct((currentProduct) => ({
-  //     ...currentProduct,
-  //     quantity,
-  //   }))
-  // }
+  const onUpdateQuantity = (quantity: number): void => {
+    setTempCartProduct((currentProduct) => ({
+      ...currentProduct,
+      quantity,
+    }))
+  }
 
   const onAddProduct = (): void => {
     if (tempCartProduct.size === undefined) {
@@ -79,7 +81,15 @@ const ProductPage: NextPage<Props> = ({ product }) => {
 
             <Box sx={{ my: 2 }}>
               <Typography variant="subtitle2">Quantity</Typography>
-              <ItemCounter />
+              <ItemCounter
+                currentValue={tempCartProduct.quantity}
+                updatedQuantity={onUpdateQuantity}
+                maxValue={
+                  product.inStock > MaxValuePerProduct
+                    ? MaxValuePerProduct
+                    : product.inStock
+                }
+              />
               <SizeSelector
                 sizes={product.sizes}
                 selectedSize={tempCartProduct.size}
