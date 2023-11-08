@@ -25,7 +25,7 @@ export const OrderSummary: FC = () => {
       </Grid>
 
       <Grid item xs={6}>
-        <Typography>Tax (15%)</Typography>
+        <Typography>Tax (10%)</Typography>
       </Grid>
       <Grid item xs={6} display="flex" justifyContent="end">
         <Typography>{toCurrency(tax)}</Typography>
