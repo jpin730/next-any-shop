@@ -1,6 +1,7 @@
 import { connect, disconnect } from '@/database/connect'
 import { initialData } from '@/database/data'
 import { Product } from '@/models/Product'
+import { User } from '@/models/User'
 import { type NextApiRequest, type NextApiResponse } from 'next'
 
 interface Data {
@@ -13,11 +14,19 @@ export default async function handler(
 ): Promise<void> {
   try {
     await connect()
+
+    await User.deleteMany()
+    await User.insertMany(initialData.users)
+
     await Product.deleteMany()
     await Product.insertMany(initialData.products)
+
     await disconnect()
+
     res.status(200).json({ message: 'Data initialized successfully' })
   } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log(error)
     await disconnect()
     res.status(500).json({ message: 'Server error' })
   }
