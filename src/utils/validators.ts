@@ -7,3 +7,6 @@ export const isValidEmail = (email: string): boolean => {
 
   return match !== null
 }
+
+export const isEmail = (email: string): string | undefined =>
+  isValidEmail(email) ? undefined : 'Email is not valid'
