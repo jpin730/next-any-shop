@@ -32,7 +32,7 @@ interface SeedData {
 export const initialData: SeedData = {
   users: [
     {
-      name: 'John Doe',
+      name: 'John Doe Admin',
       email: 'admin@email.com',
       password: hashSync('123456'),
       role: 'admin',

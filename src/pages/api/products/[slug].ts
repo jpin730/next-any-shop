@@ -41,8 +41,7 @@ async function getProductBySlug(
 
     res.json(product)
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log(error)
+    console.error(error)
     await disconnect()
     res.status(500).json({ message: 'Server error' })
   }

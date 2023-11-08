@@ -45,8 +45,7 @@ const searchProducts = async (
     await disconnect()
     res.status(200).json(products)
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log(error)
+    console.error(error)
     await disconnect()
     res.status(500).json({ message: 'Server error' })
   }
