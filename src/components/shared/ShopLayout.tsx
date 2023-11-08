@@ -36,6 +36,7 @@ export const ShopLayout: FC<Props> = ({
       <SideMenu />
 
       <main
+        className="fadeIn"
         style={{
           margin: '80px auto',
           maxWidth: '1440px',

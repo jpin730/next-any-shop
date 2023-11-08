@@ -21,7 +21,7 @@ const CartPage: NextPage = () => {
 
       <Grid container columnSpacing={2}>
         <Grid item xs={12} md={8}>
-          <CartList />
+          <CartList editable />
         </Grid>
         <Grid item xs={12} md={4}>
           <Card className="summary-card">

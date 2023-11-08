@@ -15,6 +15,7 @@ import { useContext, type FC, useState } from 'react'
 import { useRouter } from 'next/router'
 import { SharedContext } from '@/context/shared/SharedProvider'
 import { Input, InputAdornment } from '@mui/material'
+import { CartContext } from '@/context/cart/CartProvider'
 
 interface NavItem {
   text: string
@@ -37,8 +38,11 @@ const navItems: NavItem[] = [
 ]
 
 export const Navbar: FC = () => {
-  const { toggleSideMenu } = useContext(SharedContext)
   const { asPath, push } = useRouter()
+
+  const { toggleSideMenu } = useContext(SharedContext)
+  const { numberOfItems } = useContext(CartContext)
+
   const [searchTerm, setSearchTerm] = useState('')
   const [isSearchVisible, setIsSearchVisible] = useState(false)
 
@@ -135,7 +139,10 @@ export const Navbar: FC = () => {
         <NextLink href="/cart">
           <Link component="span">
             <IconButton>
-              <Badge badgeContent={2} color="secondary">
+              <Badge
+                color="secondary"
+                badgeContent={numberOfItems > 9 ? '+9' : numberOfItems}
+              >
                 <ShoppingCart />
               </Badge>
             </IconButton>

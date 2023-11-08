@@ -1,4 +1,3 @@
-import { initialData } from '@/database/data'
 import {
   Box,
   Button,
@@ -9,32 +8,42 @@ import {
   Typography,
 } from '@mui/material'
 import NextLink from 'next/link'
-import { type FC } from 'react'
+import { useContext, type FC } from 'react'
 import { ItemCounter } from '../shared/ItemCounter'
 import { toCurrency } from '@/utils/toCurrency'
-
-const productsInCart = [
-  initialData.products[0],
-  initialData.products[1],
-  initialData.products[2],
-]
+import { CartContext } from '@/context/cart/CartProvider'
+import { type ICartProduct } from '@/interfaces/ICartProduct'
 
 interface Props {
   editable?: boolean
 }
 
 export const CartList: FC<Props> = ({ editable = false }) => {
+  const { cart, updateCartQuantity, removeCartProduct } =
+    useContext(CartContext)
+
+  const onNewCartQuantityValue = (
+    product: ICartProduct,
+    newQuantityValue: number,
+  ): void => {
+    product.quantity = newQuantityValue
+    updateCartQuantity(product)
+  }
   return (
     <>
-      {productsInCart.map((product) => (
-        <Grid container spacing={2} key={product.slug} sx={{ mb: 3 }}>
+      {cart.map((product) => (
+        <Grid
+          container
+          spacing={2}
+          key={product.slug + product.size}
+          sx={{ mb: 3 }}
+        >
           <Grid item xs={3}>
-            {/* TODO: Go to product details page */}
-            <NextLink href="/product/slug">
+            <NextLink href={`/product/${product.slug}`}>
               <Link component="span" sx={{ borderRadius: 3 }}>
                 <CardActionArea>
                   <CardMedia
-                    image={`/products/${product.images.at(0)}`}
+                    image={`/products/${product.image}`}
                     component="img"
                     sx={{
                       borderRadius: 3,
@@ -48,18 +57,28 @@ export const CartList: FC<Props> = ({ editable = false }) => {
           </Grid>
           <Grid item xs={7}>
             <Box display="flex" flexDirection="column">
-              <Typography variant="body1" fontWeight="600">
-                {product.title}
-              </Typography>
+              <NextLink href={`/product/${product.slug}`}>
+                <Link component="span" underline="hover">
+                  <Typography variant="body1" fontWeight="600">
+                    {product.title}
+                  </Typography>
+                </Link>
+              </NextLink>
               <Typography variant="body1">
-                Size: <strong>M</strong>
+                Size: <strong>{product.size}</strong>
               </Typography>
 
               {editable ? (
-                <ItemCounter />
+                <ItemCounter
+                  currentValue={product.quantity}
+                  maxValue={10}
+                  updatedQuantity={(value) => {
+                    onNewCartQuantityValue(product, value)
+                  }}
+                />
               ) : (
                 <Typography>
-                  Quantity: <strong>3</strong>
+                  Quantity: <strong>{product.quantity}</strong>
                 </Typography>
               )}
             </Box>
@@ -76,7 +95,13 @@ export const CartList: FC<Props> = ({ editable = false }) => {
             </Typography>
 
             {editable && (
-              <Button variant="text" color="secondary">
+              <Button
+                variant="text"
+                color="secondary"
+                onClick={() => {
+                  removeCartProduct(product)
+                }}
+              >
                 Remove
               </Button>
             )}
