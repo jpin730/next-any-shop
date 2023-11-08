@@ -1,6 +1,14 @@
 import { type ICartProduct } from '@/interfaces/ICartProduct'
-import { type FC, type ReactNode, createContext, useReducer } from 'react'
+import {
+  type FC,
+  type ReactNode,
+  createContext,
+  useReducer,
+  useEffect,
+  useRef,
+} from 'react'
 import { type CartState, cartInitialState, cartReducer } from './cartReducer'
+import Cookie from 'js-cookie'
 
 interface ContextProps extends CartState {
   addProductToCart: (product: ICartProduct) => void
@@ -18,35 +26,52 @@ interface ProviderProps {
 
 export const CartProvider: FC<ProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(cartReducer, cartInitialState)
+  const firstTimeLoad = useRef(true)
 
-  // useEffect(() => {
-  //     try {
-  //         const cookieProducts = Cookie.get('cart') ? JSON.parse( Cookie.get('cart')! ): []
-  //         dispatch({ type: '[Cart] - LoadCart from cookies | storage', payload: cookieProducts });
-  //     } catch (error) {
-  //         dispatch({ type: '[Cart] - LoadCart from cookies | storage', payload: [] });
-  //     }
-  // }, []);
+  useEffect(() => {
+    try {
+      const cookieProducts = JSON.parse(Cookie.get('cart') ?? '[]')
+      dispatch({
+        type: '[Cart] - Load cart from cookies | storage',
+        payload: cookieProducts,
+      })
+    } catch (error) {
+      dispatch({
+        type: '[Cart] - Load cart from cookies | storage',
+        payload: [],
+      })
+    }
+  }, [])
 
-  // useEffect(() => {
-  //   Cookie.set('cart', JSON.stringify( state.cart ));
-  // }, [state.cart]);
+  useEffect(() => {
+    if (firstTimeLoad.current) {
+      firstTimeLoad.current = false
+      if (state.cart.length === 0) return
+    }
 
-  // useEffect(() => {
+    Cookie.set('cart', JSON.stringify(state.cart))
+  }, [state.cart])
 
-  //     const numberOfItems = state.cart.reduce( ( prev, current ) => current.quantity + prev , 0 );
-  //     const subTotal = state.cart.reduce( ( prev, current ) => (current.price * current.quantity) + prev, 0 );
-  //     const taxRate =  Number(process.env.NEXT_PUBLIC_TAX_RATE || 0);
+  useEffect(() => {
+    const numberOfItems = state.cart.reduce(
+      (prev, current) => current.quantity + prev,
+      0,
+    )
+    const subTotal = state.cart.reduce(
+      (prev, current) => current.price * current.quantity + prev,
+      0,
+    )
+    const taxRate = 0.1
 
-  //     const orderSummary = {
-  //         numberOfItems,
-  //         subTotal,
-  //         tax: subTotal * taxRate,
-  //         total: subTotal * ( taxRate + 1 )
-  //     }
+    const orderSummary = {
+      numberOfItems,
+      subTotal,
+      tax: subTotal * taxRate,
+      total: subTotal * (taxRate + 1),
+    }
 
-  //     dispatch({ type: '[Cart] - Update order summary', payload: orderSummary });
-  // }, [state.cart]);
+    dispatch({ type: '[Cart] - Update order summary', payload: orderSummary })
+  }, [state.cart])
 
   const addProductToCart = (product: ICartProduct): void => {
     const productInCart = state.cart.some((p) => p._id === product._id)
