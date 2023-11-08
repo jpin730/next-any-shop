@@ -36,7 +36,9 @@ const getProducts = async (
       .lean()
     await disconnect()
     res.status(200).json(products)
-  } catch {
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log(error)
     await disconnect()
     res.status(500).json({ message: 'Server error' })
   }
