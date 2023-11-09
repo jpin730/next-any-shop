@@ -1,4 +1,5 @@
 import { AuthLayout } from '@/components/shared/AuthLayout'
+import { AuthContext } from '@/context/auth/AuthProvider'
 import { isEmail } from '@/utils/validators'
 import ErrorOutline from '@mui/icons-material/ErrorOutline'
 import {
@@ -12,7 +13,8 @@ import {
 } from '@mui/material'
 import { type NextPage } from 'next'
 import NextLink from 'next/link'
-import { useState } from 'react'
+import { useRouter } from 'next/router'
+import { useContext, useState } from 'react'
 import { type SubmitHandler, useForm } from 'react-hook-form'
 
 interface LoginFormData {
@@ -21,31 +23,35 @@ interface LoginFormData {
 }
 
 const LoginPage: NextPage = () => {
+  const router = useRouter()
+  const { loginUser } = useContext(AuthContext)
+  const [showError, setShowError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+
   const {
     handleSubmit,
     register,
     formState: { errors },
   } = useForm<LoginFormData>()
 
-  const [showError, setShowError] = useState(false)
-
-  const onLoginUser: SubmitHandler<LoginFormData> = ({
+  const onLoginUser: SubmitHandler<LoginFormData> = async ({
     email,
     password,
-  }): void => {
-    setShowError(true)
+  }): Promise<void> => {
+    setShowError(false)
 
-    // const isValidLogin = await loginUser(email, password)
+    const response = await loginUser(email, password)
 
-    // if (!isValidLogin) {
-    //   setShowError(true)
-    setTimeout(() => {
-      setShowError(false)
-    }, 3000)
-    //   return
-    // }
+    if (response.hasError) {
+      setShowError(true)
+      setErrorMessage(response.message ?? 'Error on login')
+      setTimeout(() => {
+        setShowError(false)
+      }, 3000)
+      return
+    }
 
-    // router.replace('/');
+    void router.replace('/')
   }
 
   return (
@@ -57,7 +63,7 @@ const LoginPage: NextPage = () => {
             <Grid item xs={12}>
               <Typography variant="h1">Login</Typography>
               <Chip
-                label="Credentials are not valid"
+                label={errorMessage}
                 color="error"
                 icon={<ErrorOutline />}
                 className="fadeIn"

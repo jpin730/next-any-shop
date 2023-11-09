@@ -16,9 +16,7 @@ interface ContextProps extends CartState {
   updateCartQuantity: (product: ICartProduct) => void
 }
 
-export const CartContext = createContext<ContextProps>(
-  {} as unknown as ContextProps,
-)
+export const CartContext = createContext({} as unknown as ContextProps)
 
 interface ProviderProps {
   children: ReactNode

@@ -10,6 +10,7 @@ import { lightTheme } from '@/themes'
 import { SWRConfig } from 'swr'
 import { SharedProvider } from '@/context/shared/SharedProvider'
 import { CartProvider } from '@/context/cart/CartProvider'
+import { AuthProvider } from '@/context/auth/AuthProvider'
 
 export default function App({ Component, pageProps }: AppProps): JSX.Element {
   return (
@@ -22,12 +23,14 @@ export default function App({ Component, pageProps }: AppProps): JSX.Element {
       }}
     >
       <SharedProvider>
-        <CartProvider>
-          <ThemeProvider theme={lightTheme}>
-            <CssBaseline />
-            <Component {...pageProps} />
-          </ThemeProvider>
-        </CartProvider>
+        <AuthProvider>
+          <CartProvider>
+            <ThemeProvider theme={lightTheme}>
+              <CssBaseline />
+              <Component {...pageProps} />
+            </ThemeProvider>
+          </CartProvider>
+        </AuthProvider>
       </SharedProvider>
     </SWRConfig>
   )
