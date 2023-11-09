@@ -54,7 +54,6 @@ export const AuthProvider: FC<ProviderProps> = ({ children }) => {
       dispatch({ type: '[Auth] - Login', payload: user })
       return { hasError: false }
     } catch (error) {
-      console.error(error)
       const message = (error as AxiosError<{ message?: string }>).response?.data
         .message
       return { hasError: true, message }
@@ -66,30 +65,23 @@ export const AuthProvider: FC<ProviderProps> = ({ children }) => {
     email: string,
     password: string,
   ): Promise<ContextResponse> => {
-    // try {
-    //     const { data } = await tesloApi.post('/user/register', { name, email, password });
-    //     const { token, user } = data;
-    //     Cookies.set('token', token );
-    //     dispatch({ type: '[Auth] - Login', payload: user });
-    //     return {
-    //         hasError: false
-    //     }
-
-    // } catch (error) {
-    //     if ( axios.isAxiosError(error) ) {
-    //         return {
-    //             hasError: true,
-    //             message: error.response?.data.message
-    //         }
-    //     }
-
-    //     return {
-    //         hasError: true,
-    //         message: 'No se pudo crear el usuario - intente de nuevo'
-    //     }
-    // }
-
-    return { hasError: false } // TODO: Remove this line
+    try {
+      const { data } = await anyShopApi.post('/auth/register', {
+        name,
+        email,
+        password,
+      })
+      const { token, user } = data
+      Cookies.set('token', token)
+      dispatch({ type: '[Auth] - Login', payload: user })
+      return {
+        hasError: false,
+      }
+    } catch (error) {
+      const message = (error as AxiosError<{ message?: string }>).response?.data
+        .message
+      return { hasError: true, message }
+    }
   }
 
   return (
