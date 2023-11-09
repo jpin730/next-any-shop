@@ -1,4 +1,10 @@
-import { type FC, createContext, useReducer, type ReactNode } from 'react'
+import {
+  type FC,
+  createContext,
+  useReducer,
+  type ReactNode,
+  useEffect,
+} from 'react'
 import { authInitialState, authReducer, type AuthState } from './authReducer'
 import Cookies from 'js-cookie'
 import { anyShopApi } from '@/api/anyShopApi'
@@ -27,21 +33,22 @@ interface ProviderProps {
 export const AuthProvider: FC<ProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, authInitialState)
 
-  // useEffect(() => {
-  //     checkToken();
-  // }, [])
+  useEffect(() => {
+    void checkToken()
+  }, [])
 
-  // const checkToken = async() => {
+  const checkToken = async (): Promise<void> => {
+    if (Cookies.get('token') === undefined) return
 
-  //     try {
-  //         const { data } = await tesloApi.get('/user/validate-token');
-  //         const { token, user } = data;
-  //         Cookies.set('token', token );
-  //         dispatch({ type: '[Auth] - Login', payload: user });
-  //     } catch (error) {
-  //         Cookies.remove('token');
-  //     }
-  // }
+    try {
+      const { data } = await anyShopApi.get('/auth/validate')
+      const { token, user } = data
+      Cookies.set('token', token)
+      dispatch({ type: '[Auth] - Login', payload: user })
+    } catch (error) {
+      Cookies.remove('token')
+    }
+  }
 
   const loginUser = async (
     email: string,
