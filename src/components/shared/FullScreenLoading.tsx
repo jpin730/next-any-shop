@@ -4,6 +4,7 @@ import { type FC } from 'react'
 export const FullScreenLoading: FC = () => {
   return (
     <Box
+      className="fadeIn"
       display="flex"
       flexDirection="column"
       justifyContent="center"

@@ -1,6 +1,8 @@
 import { CartList } from '@/components/cart/CartList'
 import { OrderSummary } from '@/components/cart/OrderSummary'
+import { FullScreenLoading } from '@/components/shared/FullScreenLoading'
 import { ShopLayout } from '@/components/shared/ShopLayout'
+import { CartContext } from '@/context/cart/CartProvider'
 import {
   Box,
   Button,
@@ -11,8 +13,21 @@ import {
   Typography,
 } from '@mui/material'
 import { type NextPage } from 'next'
+import { useRouter } from 'next/router'
+import { useContext, useEffect } from 'react'
 
 const CartPage: NextPage = () => {
+  const { isLoaded, cart } = useContext(CartContext)
+  const router = useRouter()
+
+  useEffect(() => {
+    void (isLoaded && cart.length === 0 && router.replace('/cart/empty'))
+  }, [cart.length, isLoaded, router])
+
+  if (!isLoaded || cart.length === 0) {
+    return <FullScreenLoading />
+  }
+
   return (
     <ShopLayout title="Cart" pageDescription="Shopping cart">
       <Typography variant="h1" sx={{ mb: 3 }}>
@@ -30,7 +45,12 @@ const CartPage: NextPage = () => {
               <Divider sx={{ my: 1 }} />
               <OrderSummary />
               <Box sx={{ mt: 1 }}>
-                <Button color="secondary" className="circular-btn" fullWidth>
+                <Button
+                  color="secondary"
+                  className="circular-btn"
+                  fullWidth
+                  href="/checkout/address"
+                >
                   Checkout
                 </Button>
               </Box>

@@ -125,8 +125,13 @@ export const SideMenu: FC = () => {
         icon: <AdminPanelSettings />,
         hidden: user?.role !== 'admin',
       },
+      {
+        text: user?.email ?? '',
+        subheader: true,
+        hidden: !isLoggedIn,
+      },
     ],
-    [isLoggedIn, logout, user?.role, navigateTo, router.asPath],
+    [isLoggedIn, logout, navigateTo, router.asPath, user?.email, user?.role],
   )
 
   const onSearchTerm = (): void => {
@@ -192,6 +197,3 @@ export const SideMenu: FC = () => {
     </Drawer>
   )
 }
-
-// Q: What's the notation of query string in URL?>
-// A: https://en.wikipedia.org/wiki/Query_string

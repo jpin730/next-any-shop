@@ -1,4 +1,6 @@
+import { FullScreenLoading } from '@/components/shared/FullScreenLoading'
 import { ShopLayout } from '@/components/shared/ShopLayout'
+import { CartContext } from '@/context/cart/CartProvider'
 import {
   Box,
   Button,
@@ -11,8 +13,21 @@ import {
   Typography,
 } from '@mui/material'
 import { type NextPage } from 'next'
+import { useRouter } from 'next/router'
+import { useContext, useEffect } from 'react'
 
 const AddressPage: NextPage = () => {
+  const { isLoaded, cart } = useContext(CartContext)
+  const router = useRouter()
+
+  useEffect(() => {
+    void (isLoaded && cart.length === 0 && router.replace('/cart/empty'))
+  }, [cart.length, isLoaded, router])
+
+  if (!isLoaded || cart.length === 0) {
+    return <FullScreenLoading />
+  }
+
   return (
     <ShopLayout title="Address" pageDescription="Confirm address for shipping.">
       <Typography variant="h1" sx={{ mb: 3 }}>
@@ -44,7 +59,7 @@ const AddressPage: NextPage = () => {
         <Grid item xs={12} md={6}>
           <FormControl variant="filled" fullWidth>
             <InputLabel>State</InputLabel>
-            <Select variant="filled">
+            <Select variant="filled" value="">
               <MenuItem value="ca">California</MenuItem>
               <MenuItem value="fl">Florida</MenuItem>
               <MenuItem value="ny">New York</MenuItem>

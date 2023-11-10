@@ -1,6 +1,7 @@
 import { type ICartProduct } from '@/interfaces/ICartProduct'
 
 export interface CartState {
+  isLoaded: boolean
   cart: ICartProduct[]
   numberOfItems: number
   subTotal: number
@@ -9,6 +10,7 @@ export interface CartState {
 }
 
 export const cartInitialState: CartState = {
+  isLoaded: false,
   cart: [],
   numberOfItems: 0,
   subTotal: 0,
@@ -42,6 +44,7 @@ export const cartReducer = (
     case '[Cart] - Load cart from cookies | storage':
       return {
         ...state,
+        isLoaded: true,
         cart: [...action.payload],
       }
 
