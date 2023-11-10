@@ -9,6 +9,7 @@ import { authInitialState, authReducer, type AuthState } from './authReducer'
 import Cookies from 'js-cookie'
 import { anyShopApi } from '@/api/anyShopApi'
 import { type AxiosError } from 'axios'
+import { useRouter } from 'next/router'
 
 interface ContextResponse {
   hasError: boolean
@@ -22,6 +23,7 @@ interface ContextProps extends AuthState {
     email: string,
     password: string,
   ) => Promise<ContextResponse>
+  logout: () => void
 }
 
 export const AuthContext = createContext({} as unknown as ContextProps)
@@ -32,6 +34,8 @@ interface ProviderProps {
 
 export const AuthProvider: FC<ProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, authInitialState)
+
+  const router = useRouter()
 
   useEffect(() => {
     void checkToken()
@@ -91,12 +95,19 @@ export const AuthProvider: FC<ProviderProps> = ({ children }) => {
     }
   }
 
+  const logout = (): void => {
+    Cookies.remove('token')
+    Cookies.remove('cart')
+    router.reload()
+  }
+
   return (
     <AuthContext.Provider
       value={{
         ...state,
         loginUser,
         registerUser,
+        logout,
       }}
     >
       {children}

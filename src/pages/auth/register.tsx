@@ -31,7 +31,9 @@ const RegisterPage: NextPage = () => {
     handleSubmit,
     register,
     formState: { errors },
-  } = useForm<RegisterFormData>()
+  } = useForm<RegisterFormData>({
+    defaultValues: { email: 'user1@email.com', password: '123456', name: 'JP' }, // TODO: Remove this line
+  })
 
   const [showError, setShowError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
@@ -53,7 +55,7 @@ const RegisterPage: NextPage = () => {
       return
     }
 
-    void router.replace('/')
+    void router.replace(router.query.p?.toString() ?? '/')
   }
   return (
     <AuthLayout title="Register">
@@ -130,7 +132,12 @@ const RegisterPage: NextPage = () => {
               </Button>
             </Grid>
             <Grid item xs={12} display="flex" justifyContent="end">
-              <NextLink href="/auth/login">
+              <NextLink
+                href={{
+                  pathname: '/auth/login',
+                  query: { p: router.query.p },
+                }}
+              >
                 <Link component="span" underline="always">
                   Do you already have an account?
                 </Link>

@@ -1,4 +1,11 @@
-import { useContext, type FC, type ReactNode, useState } from 'react'
+import {
+  useContext,
+  type FC,
+  type ReactNode,
+  useState,
+  useMemo,
+  useCallback,
+} from 'react'
 import AccountCircle from '@mui/icons-material/AccountCircle'
 import AdminPanelSettings from '@mui/icons-material/AdminPanelSettings'
 import Box from '@mui/material/Box'
@@ -23,77 +30,104 @@ import Search from '@mui/icons-material/Search'
 import VpnKey from '@mui/icons-material/VpnKey'
 import { useRouter } from 'next/router'
 import { SharedContext } from '@/context/shared/SharedProvider'
+import { AuthContext } from '@/context/auth/AuthProvider'
 
 interface NavItem {
   text: string
+  action?: () => void // TODO: make required
   icon?: ReactNode
-  path?: string
   responsive?: true
   subheader?: true
+  hidden?: boolean
 }
-
-const navItems: NavItem[] = [
-  {
-    text: 'Profile',
-    icon: <AccountCircle />,
-  },
-  {
-    text: 'My orders',
-    icon: <ConfirmationNumber />,
-  },
-  {
-    text: 'Men',
-    path: '/category/men',
-    icon: <Male />,
-    responsive: true,
-  },
-  {
-    text: 'Women',
-    path: '/category/women',
-    icon: <Female />,
-    responsive: true,
-  },
-  {
-    text: 'Kids',
-    path: '/category/kids',
-    icon: <EscalatorWarning />,
-    responsive: true,
-  },
-  {
-    text: 'Login',
-    icon: <VpnKey />,
-  },
-  {
-    text: 'Logout',
-    icon: <Logout />,
-  },
-  {
-    text: 'Admin Panel',
-    subheader: true,
-  },
-  {
-    text: 'Products',
-    icon: <Category />,
-  },
-  {
-    text: 'Orders',
-    icon: <ConfirmationNumber />,
-  },
-  {
-    text: 'Users',
-    icon: <AdminPanelSettings />,
-  },
-]
 
 export const SideMenu: FC = () => {
   const router = useRouter()
   const { isMenuOpen, toggleSideMenu } = useContext(SharedContext)
+  const { user, isLoggedIn, logout } = useContext(AuthContext)
   const [searchTerm, setSearchTerm] = useState('')
 
-  const navigateTo = (url: string): void => {
-    toggleSideMenu()
-    void router.push(url)
-  }
+  const navigateTo = useCallback(
+    (url: string): void => {
+      toggleSideMenu()
+      void router.push(url)
+    },
+    [router, toggleSideMenu],
+  )
+
+  const navItems = useMemo<NavItem[]>(
+    () => [
+      {
+        text: 'Profile',
+        icon: <AccountCircle />,
+        hidden: !isLoggedIn,
+      },
+      {
+        text: 'My orders',
+        icon: <ConfirmationNumber />,
+        hidden: !isLoggedIn,
+      },
+      {
+        text: 'Men',
+        action: () => {
+          navigateTo('/category/men')
+        },
+        icon: <Male />,
+        responsive: true,
+      },
+      {
+        text: 'Women',
+        action: () => {
+          navigateTo('/category/women')
+        },
+        icon: <Female />,
+        responsive: true,
+      },
+      {
+        text: 'Kids',
+        action: () => {
+          navigateTo('/category/kids')
+        },
+        icon: <EscalatorWarning />,
+        responsive: true,
+      },
+      {
+        text: 'Login',
+        action: () => {
+          navigateTo(`/auth/login?p=${encodeURIComponent(router.asPath)}`)
+        },
+        icon: <VpnKey />,
+        hidden: isLoggedIn,
+      },
+      {
+        text: 'Logout',
+        action: logout,
+        icon: <Logout />,
+        hidden: !isLoggedIn,
+      },
+      {
+        text: 'Admin Panel',
+        subheader: true,
+        hidden: user?.role !== 'admin',
+      },
+      {
+        text: 'Products',
+        icon: <Category />,
+        hidden: user?.role !== 'admin',
+      },
+      {
+        text: 'Orders',
+        icon: <ConfirmationNumber />,
+        hidden: user?.role !== 'admin',
+      },
+      {
+        text: 'Users',
+        icon: <AdminPanelSettings />,
+        hidden: user?.role !== 'admin',
+      },
+    ],
+    [isLoggedIn, logout, user?.role, navigateTo, router.asPath],
+  )
 
   const onSearchTerm = (): void => {
     const searchTermTrimmed = searchTerm.trim()
@@ -132,27 +166,32 @@ export const SideMenu: FC = () => {
             />
           </ListItem>
 
-          {navItems.map(({ icon, text, path, responsive, subheader }) =>
-            subheader === true ? (
-              <div key={text}>
-                <Divider />
-                <ListSubheader>{text}</ListSubheader>
-              </div>
-            ) : (
-              <ListItemButton
-                key={text}
-                sx={responsive && { display: { xs: '', sm: 'none' } }}
-                onClick={() => {
-                  path !== undefined && navigateTo(path)
-                }}
-              >
-                <ListItemIcon>{icon}</ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            ),
+          {navItems.map(
+            ({ icon, text, action, responsive, subheader, hidden }) =>
+              hidden !== true &&
+              (subheader === true ? (
+                <div key={text}>
+                  <Divider />
+                  <ListSubheader>{text}</ListSubheader>
+                </div>
+              ) : (
+                <ListItemButton
+                  key={text}
+                  sx={responsive && { display: { xs: '', sm: 'none' } }}
+                  onClick={() => {
+                    action !== undefined && action()
+                  }}
+                >
+                  <ListItemIcon>{icon}</ListItemIcon>
+                  <ListItemText primary={text} />
+                </ListItemButton>
+              )),
           )}
         </List>
       </Box>
     </Drawer>
   )
 }
+
+// Q: What's the notation of query string in URL?>
+// A: https://en.wikipedia.org/wiki/Query_string

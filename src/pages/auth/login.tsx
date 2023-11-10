@@ -32,7 +32,9 @@ const LoginPage: NextPage = () => {
     handleSubmit,
     register,
     formState: { errors },
-  } = useForm<LoginFormData>()
+  } = useForm<LoginFormData>({
+    defaultValues: { email: 'user@email.com', password: '123456' }, // TODO: Remove this line
+  })
 
   const onLoginUser: SubmitHandler<LoginFormData> = async ({
     email,
@@ -51,7 +53,7 @@ const LoginPage: NextPage = () => {
       return
     }
 
-    void router.replace('/')
+    void router.replace(router.query.p?.toString() ?? '/')
   }
 
   return (
@@ -113,7 +115,12 @@ const LoginPage: NextPage = () => {
               </Button>
             </Grid>
             <Grid item xs={12} display="flex" justifyContent="end">
-              <NextLink href="/auth/register">
+              <NextLink
+                href={{
+                  pathname: '/auth/register',
+                  query: { p: router.query.p },
+                }}
+              >
                 <Link component="span" underline="always">
                   Don&apos;t you have an account?
                 </Link>
