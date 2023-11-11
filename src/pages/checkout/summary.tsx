@@ -19,7 +19,7 @@ import { useRouter } from 'next/router'
 import { useContext, useEffect } from 'react'
 
 const SummaryPage: NextPage = () => {
-  const { isLoaded, cart } = useContext(CartContext)
+  const { isLoaded, cart, address, numberOfItems } = useContext(CartContext)
   const router = useRouter()
 
   useEffect(() => {
@@ -43,7 +43,10 @@ const SummaryPage: NextPage = () => {
         <Grid item xs={12} md={4}>
           <Card className="summary-card">
             <CardContent>
-              <Typography variant="h2">Summary (3 products)</Typography>
+              <Typography variant="h2">
+                Summary ({numberOfItems}{' '}
+                {numberOfItems === 1 ? 'product' : 'products'})
+              </Typography>
               <Divider sx={{ my: 1 }} />
 
               <Box display="flex" justifyContent="space-between">
@@ -55,11 +58,18 @@ const SummaryPage: NextPage = () => {
                 </NextLink>
               </Box>
 
-              <Typography>John Doe</Typography>
-              <Typography>123 Somewhere St.</Typography>
-              <Typography>Apartment 12</Typography>
-              <Typography>California</Typography>
-              <Typography>+1 123 456 7890</Typography>
+              <Typography>
+                {address.firstName} {address.lastName}{' '}
+              </Typography>
+              <Typography>{address.address}</Typography>
+              {address.address2 !== '' && (
+                <Typography>{address.address2}</Typography>
+              )}
+              <Typography>
+                {address.city}, {address.state}
+              </Typography>
+              <Typography>{address.zip}</Typography>
+              <Typography>{address.phone}</Typography>
 
               <Divider sx={{ my: 1 }} />
 

@@ -8,12 +8,15 @@ import {
   useRef,
 } from 'react'
 import { type CartState, cartInitialState, cartReducer } from './cartReducer'
-import Cookie from 'js-cookie'
+import Cookies from 'js-cookie'
+import { getAddressFromCookies } from '@/utils/getAddressFromCookies'
+import { type IAddress } from '@/interfaces/IAddress'
 
 interface ContextProps extends CartState {
   addProductToCart: (product: ICartProduct) => void
   removeCartProduct: (product: ICartProduct) => void
   updateCartQuantity: (product: ICartProduct) => void
+  updateAddress: (address: IAddress) => void
 }
 
 export const CartContext = createContext({} as unknown as ContextProps)
@@ -28,7 +31,7 @@ export const CartProvider: FC<ProviderProps> = ({ children }) => {
 
   useEffect(() => {
     try {
-      const cookieProducts = JSON.parse(Cookie.get('cart') ?? '[]')
+      const cookieProducts = JSON.parse(Cookies.get('cart') ?? '[]')
       dispatch({
         type: '[Cart] - Load cart from cookies | storage',
         payload: cookieProducts,
@@ -42,12 +45,19 @@ export const CartProvider: FC<ProviderProps> = ({ children }) => {
   }, [])
 
   useEffect(() => {
+    dispatch({
+      type: '[Cart] - Load address from cookies',
+      payload: getAddressFromCookies(),
+    })
+  }, [])
+
+  useEffect(() => {
     if (firstTimeLoad.current) {
       firstTimeLoad.current = false
       if (state.cart.length === 0) return
     }
 
-    Cookie.set('cart', JSON.stringify(state.cart))
+    Cookies.set('cart', JSON.stringify(state.cart))
   }, [state.cart])
 
   useEffect(() => {
@@ -113,6 +123,12 @@ export const CartProvider: FC<ProviderProps> = ({ children }) => {
     dispatch({ type: '[Cart] - Remove product in cart', payload: product })
   }
 
+  const updateAddress = (address: IAddress): void => {
+    Cookies.set('address', JSON.stringify(address))
+
+    dispatch({ type: '[Cart] - Update address', payload: address })
+  }
+
   return (
     <CartContext.Provider
       value={{
@@ -120,6 +136,7 @@ export const CartProvider: FC<ProviderProps> = ({ children }) => {
         addProductToCart,
         removeCartProduct,
         updateCartQuantity,
+        updateAddress,
       }}
     >
       {children}
