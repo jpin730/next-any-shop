@@ -17,13 +17,16 @@ import { type NextPage } from 'next'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { useContext, useEffect } from 'react'
+import Cookies from 'js-cookie'
 
 const SummaryPage: NextPage = () => {
   const { isLoaded, cart, address, numberOfItems } = useContext(CartContext)
   const router = useRouter()
 
   useEffect(() => {
-    void (isLoaded && cart.length === 0 && router.replace('/cart/empty'))
+    if (Cookies.get('address') == null) void router.replace('/checkout/address')
+
+    if (isLoaded && cart.length === 0) void router.replace('/cart/empty')
   }, [cart.length, isLoaded, router])
 
   if (!isLoaded || cart.length === 0) {

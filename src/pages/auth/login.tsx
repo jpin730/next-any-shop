@@ -33,7 +33,7 @@ const LoginPage: NextPage = () => {
     register,
     formState: { errors },
   } = useForm<LoginFormData>({
-    defaultValues: { email: 'user@email.com', password: '123456' }, // TODO: Remove this line
+    defaultValues: { email: 'user@email.com', password: '123456' },
   })
 
   const onLoginUser: SubmitHandler<LoginFormData> = async ({
@@ -54,6 +54,10 @@ const LoginPage: NextPage = () => {
     }
 
     void router.replace(router.query.p?.toString() ?? '/')
+  }
+
+  const loginAsAdmin = (): void => {
+    onLoginUser({ email: 'admin@email.com', password: '123456' })
   }
 
   return (
@@ -113,6 +117,16 @@ const LoginPage: NextPage = () => {
               >
                 Login
               </Button>
+            </Grid>
+            <Grid item xs={12} display="flex" justifyContent="center">
+              <Link
+                component="button"
+                type="button"
+                underline="hover"
+                onClick={loginAsAdmin}
+              >
+                Login as Admin
+              </Link>
             </Grid>
             <Grid item xs={12} display="flex" justifyContent="end">
               <NextLink

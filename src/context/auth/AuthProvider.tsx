@@ -98,6 +98,7 @@ export const AuthProvider: FC<ProviderProps> = ({ children }) => {
   const logout = (): void => {
     Cookies.remove('token')
     Cookies.remove('cart')
+    Cookies.remove('address')
     router.reload()
   }
 
