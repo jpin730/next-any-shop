@@ -13,81 +13,96 @@ import {
   Chip,
   Divider,
   Grid,
-  Link,
   Typography,
 } from '@mui/material'
 import { type GetServerSideProps, type NextPage } from 'next'
-import NextLink from 'next/link'
 
 interface Props {
   order: IOrder
 }
 
 const OrderPage: NextPage<Props> = ({ order }) => {
+  const {
+    _id,
+    address,
+    isPaid,
+    numberOfItems,
+    orderItems,
+    subTotal,
+    tax,
+    total,
+  } = order
+
   return (
     <ShopLayout title="Order #1234567" pageDescription="Order summary">
       <Typography variant="h1" sx={{ mb: 3 }}>
-        Order #1234567
+        Order {_id}
       </Typography>
 
-      <Chip
-        sx={{ mb: 3 }}
-        label="Pending payment"
-        variant="outlined"
-        icon={<CreditCardOffOutlined />}
-      />
-
-      <Chip
-        sx={{ mb: 3 }}
-        label="Order paid"
-        variant="outlined"
-        color="secondary"
-        icon={<CreditScoreOutlined />}
-      />
+      {isPaid ? (
+        <Chip
+          sx={{ mb: 3 }}
+          label="Order paid"
+          variant="outlined"
+          color="secondary"
+          icon={<CreditScoreOutlined />}
+        />
+      ) : (
+        <Chip
+          sx={{ mb: 3 }}
+          label="Pending payment"
+          variant="outlined"
+          icon={<CreditCardOffOutlined />}
+        />
+      )}
 
       <Grid container columnSpacing={2}>
         <Grid item xs={12} md={8}>
-          <CartList />
+          <CartList products={orderItems} />
         </Grid>
         <Grid item xs={12} md={4}>
           <Card className="summary-card">
             <CardContent>
-              <Typography variant="h2">Summary (3 products)</Typography>
+              <Typography variant="h2">
+                Summary ({numberOfItems}{' '}
+                {numberOfItems === 1 ? 'product' : 'products'})
+              </Typography>
               <Divider sx={{ my: 1 }} />
 
               <Box display="flex" justifyContent="space-between">
                 <Typography variant="subtitle1">Shipping address</Typography>
-                <NextLink href="/checkout/address">
-                  <Link component="span" underline="always">
-                    Edit
-                  </Link>
-                </NextLink>
               </Box>
 
-              <Typography>John Doe</Typography>
-              <Typography>123 Somewhere St.</Typography>
-              <Typography>Apartment 12</Typography>
-              <Typography>California</Typography>
-              <Typography>+1 123 456 7890</Typography>
+              <Typography>
+                {address.firstName} {address.lastName}
+              </Typography>
+              <Typography>{address.address}</Typography>
+              {address.address2 !== '' && (
+                <Typography>{address.address2}</Typography>
+              )}
+              <Typography>
+                {address.city}, {address.state}
+              </Typography>
+              <Typography>{address.zip}</Typography>
+              <Typography>{address.phone}</Typography>
 
               <Divider sx={{ my: 1 }} />
 
               <Box display="flex" justifyContent="space-between">
                 <Typography variant="subtitle1">Cart</Typography>
-                <NextLink href="/cart">
-                  <Link component="span" underline="always">
-                    Edit
-                  </Link>
-                </NextLink>
               </Box>
 
-              <OrderSummary />
+              <OrderSummary
+                orderValues={{ numberOfItems, subTotal, total, tax }}
+              />
 
-              <Box sx={{ mt: 2 }}>
-                <Button color="secondary" className="circular-btn" fullWidth>
-                  Pay
-                </Button>
-              </Box>
+              {!isPaid && (
+                <Box sx={{ mt: 2 }}>
+                  <Button color="secondary" className="circular-btn" fullWidth>
+                    Pay order
+                  </Button>
+                </Box>
+              )}
             </CardContent>
           </Card>
         </Grid>

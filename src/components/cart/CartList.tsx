@@ -16,11 +16,14 @@ import { type ICartProduct } from '@/interfaces/ICartProduct'
 
 interface Props {
   editable?: boolean
+  products?: ICartProduct[]
 }
 
-export const CartList: FC<Props> = ({ editable = false }) => {
+export const CartList: FC<Props> = ({ editable = false, products }) => {
   const { cart, updateCartQuantity, removeCartProduct } =
     useContext(CartContext)
+
+  const productsToShow = products ?? cart
 
   const onNewCartQuantityValue = (
     product: ICartProduct,
@@ -31,7 +34,7 @@ export const CartList: FC<Props> = ({ editable = false }) => {
   }
   return (
     <>
-      {cart.map((product) => (
+      {productsToShow.map((product) => (
         <Grid
           container
           spacing={2}

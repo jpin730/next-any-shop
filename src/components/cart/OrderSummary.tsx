@@ -3,8 +3,19 @@ import { toCurrency } from '@/utils/toCurrency'
 import { Grid, Typography } from '@mui/material'
 import { useContext, type FC } from 'react'
 
-export const OrderSummary: FC = () => {
+interface Props {
+  orderValues?: {
+    numberOfItems: number
+    subTotal: number
+    total: number
+    tax: number
+  }
+}
+
+export const OrderSummary: FC<Props> = ({ orderValues }) => {
   const { numberOfItems, subTotal, total, tax } = useContext(CartContext)
+
+  const summaryValues = orderValues ?? { numberOfItems, subTotal, total, tax }
 
   const taxRate = Number(process.env.NEXT_PUBLIC_TAX_RATE)
 
@@ -15,7 +26,8 @@ export const OrderSummary: FC = () => {
       </Grid>
       <Grid item xs={6} display="flex" justifyContent="end">
         <Typography>
-          {numberOfItems} {numberOfItems > 1 ? 'products' : 'product'}
+          {summaryValues.numberOfItems}{' '}
+          {summaryValues.numberOfItems > 1 ? 'products' : 'product'}
         </Typography>
       </Grid>
 
@@ -23,21 +35,23 @@ export const OrderSummary: FC = () => {
         <Typography>Subtotal</Typography>
       </Grid>
       <Grid item xs={6} display="flex" justifyContent="end">
-        <Typography>{toCurrency(subTotal)}</Typography>
+        <Typography>{toCurrency(summaryValues.subTotal)}</Typography>
       </Grid>
 
       <Grid item xs={6}>
         <Typography>Tax ({taxRate * 100}%)</Typography>
       </Grid>
       <Grid item xs={6} display="flex" justifyContent="end">
-        <Typography>{toCurrency(tax)}</Typography>
+        <Typography>{toCurrency(summaryValues.tax)}</Typography>
       </Grid>
 
       <Grid item xs={6} sx={{ mt: 1 }}>
         <Typography variant="subtitle1">Total:</Typography>
       </Grid>
       <Grid item xs={6} sx={{ mt: 1 }} display="flex" justifyContent="end">
-        <Typography variant="subtitle1">{toCurrency(total)}</Typography>
+        <Typography variant="subtitle1">
+          {toCurrency(summaryValues.total)}
+        </Typography>
       </Grid>
     </Grid>
   )
