@@ -11,12 +11,19 @@ import { type CartState, cartInitialState, cartReducer } from './cartReducer'
 import Cookies from 'js-cookie'
 import { getAddressFromCookies } from '@/utils/getAddressFromCookies'
 import { type IAddress } from '@/interfaces/IAddress'
+import { type IOrder } from '@/interfaces/IOrder'
+import { anyShopApi } from '@/api/anyShopApi'
+import axios from 'axios'
 
 interface ContextProps extends CartState {
   addProductToCart: (product: ICartProduct) => void
   removeCartProduct: (product: ICartProduct) => void
   updateCartQuantity: (product: ICartProduct) => void
   updateAddress: (address: IAddress) => void
+  createOrder: () => Promise<{
+    hasError: boolean
+    message: string
+  }>
 }
 
 export const CartContext = createContext({} as unknown as ContextProps)
@@ -69,7 +76,7 @@ export const CartProvider: FC<ProviderProps> = ({ children }) => {
       (prev, current) => current.price * current.quantity + prev,
       0,
     )
-    const taxRate = 0.1
+    const taxRate = Number(process.env.NEXT_PUBLIC_TAX_RATE)
 
     const orderSummary = {
       numberOfItems,
@@ -129,6 +136,51 @@ export const CartProvider: FC<ProviderProps> = ({ children }) => {
     dispatch({ type: '[Cart] - Update address', payload: address })
   }
 
+  const createOrder = async (): Promise<{
+    hasError: boolean
+    message: string
+  }> => {
+    try {
+      if (state.address == null) {
+        return {
+          hasError: true,
+          message: 'Address is required',
+        }
+      }
+
+      const body: IOrder = {
+        orderItems: state.cart,
+        address: state.address,
+        numberOfItems: state.numberOfItems,
+        subTotal: state.subTotal,
+        tax: state.tax,
+        total: state.total,
+        isPaid: false,
+      }
+      const { data } = await anyShopApi.post<IOrder>('/orders', body)
+
+      dispatch({ type: '[Cart] - Order complete' })
+
+      return {
+        hasError: false,
+        message: data._id ?? '',
+      }
+    } catch (error) {
+      console.error(error)
+
+      if (axios.isAxiosError(error)) {
+        return {
+          hasError: true,
+          message: error.response?.data.message,
+        }
+      }
+      return {
+        hasError: true,
+        message: 'Server error',
+      }
+    }
+  }
+
   return (
     <CartContext.Provider
       value={{
@@ -137,6 +189,7 @@ export const CartProvider: FC<ProviderProps> = ({ children }) => {
         removeCartProduct,
         updateCartQuantity,
         updateAddress,
+        createOrder,
       }}
     >
       {children}

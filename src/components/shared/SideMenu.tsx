@@ -66,6 +66,9 @@ export const SideMenu: FC = () => {
         text: 'My orders',
         icon: <ConfirmationNumber />,
         hidden: !isLoggedIn,
+        action: () => {
+          navigateTo('/order/history')
+        },
       },
       {
         text: 'Men',

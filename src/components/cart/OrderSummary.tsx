@@ -6,6 +6,8 @@ import { useContext, type FC } from 'react'
 export const OrderSummary: FC = () => {
   const { numberOfItems, subTotal, total, tax } = useContext(CartContext)
 
+  const taxRate = Number(process.env.NEXT_PUBLIC_TAX_RATE)
+
   return (
     <Grid container>
       <Grid item xs={6}>
@@ -25,7 +27,7 @@ export const OrderSummary: FC = () => {
       </Grid>
 
       <Grid item xs={6}>
-        <Typography>Tax (10%)</Typography>
+        <Typography>Tax ({taxRate * 100}%)</Typography>
       </Grid>
       <Grid item xs={6} display="flex" justifyContent="end">
         <Typography>{toCurrency(tax)}</Typography>
