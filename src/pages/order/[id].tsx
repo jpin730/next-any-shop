@@ -1,6 +1,9 @@
 import { CartList } from '@/components/cart/CartList'
 import { OrderSummary } from '@/components/cart/OrderSummary'
 import { ShopLayout } from '@/components/shared/ShopLayout'
+import { getOrderById } from '@/database/helpers/orders'
+import { type IOrder } from '@/interfaces/IOrder'
+import { isValidToken } from '@/utils/jwt'
 import { CreditCardOffOutlined, CreditScoreOutlined } from '@mui/icons-material'
 import {
   Box,
@@ -13,10 +16,14 @@ import {
   Link,
   Typography,
 } from '@mui/material'
-import { type NextPage } from 'next'
+import { type GetServerSideProps, type NextPage } from 'next'
 import NextLink from 'next/link'
 
-const OrderPage: NextPage = () => {
+interface Props {
+  order: IOrder
+}
+
+const OrderPage: NextPage<Props> = ({ order }) => {
   return (
     <ShopLayout title="Order #1234567" pageDescription="Order summary">
       <Typography variant="h1" sx={{ mb: 3 }}>
@@ -87,6 +94,50 @@ const OrderPage: NextPage = () => {
       </Grid>
     </ShopLayout>
   )
+}
+
+export const getServerSideProps: GetServerSideProps = async ({
+  req,
+  query,
+}) => {
+  const { id = '' } = query
+  const { token = '' } = req.cookies
+
+  let userId = ''
+
+  try {
+    userId = await isValidToken(token)
+  } catch (error) {
+    userId = ''
+  }
+
+  if (token === '' || userId === '') {
+    return {
+      redirect: {
+        destination: `/auth/login?p=${encodeURIComponent(
+          `/order/${id.toString()}`,
+        )}`,
+        permanent: false,
+      },
+    }
+  }
+
+  const order = await getOrderById(id.toString())
+
+  if (order == null || order.user !== userId) {
+    return {
+      redirect: {
+        destination: '/order/history',
+        permanent: false,
+      },
+    }
+  }
+
+  return {
+    props: {
+      order,
+    },
+  }
 }
 
 export default OrderPage
