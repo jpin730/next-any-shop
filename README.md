@@ -1,6 +1,6 @@
 # Next Any Shop
 
-This app emulates an e-commerce. It implements Material UI.
+This app emulates an e-commerce. It implements Material UI and uses Next.js Pages Router with API Routes as backend, cookies handling, JWT authentication.
 
 ## Usage
 
