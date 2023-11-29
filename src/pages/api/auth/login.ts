@@ -60,7 +60,7 @@ const loginUser = async (
 
     const { role, name, _id } = user
 
-    const token = signToken(_id, email)
+    const token = signToken(_id, email, role)
 
     res.status(200).json({
       token,

@@ -93,7 +93,7 @@ const registerUser = async (
 
     const { _id, role } = newUser
 
-    const token = signToken(_id, email)
+    const token = signToken(_id, email, role)
 
     res.status(200).json({
       token,
