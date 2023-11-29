@@ -3,6 +3,7 @@ import { ShopLayout } from '@/components/shared/ShopLayout'
 import { getOrdersByUser } from '@/database/helpers/orders'
 import { type IOrder } from '@/interfaces/IOrder'
 import { isValidToken } from '@/utils/jwt'
+import { toCurrency } from '@/utils/toCurrency'
 import { Box, Chip, Grid, Link, Typography } from '@mui/material'
 import {
   DataGrid,
@@ -16,9 +17,11 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 
 interface Row {
-  id: number
+  id: string
   paid: boolean
   fullName: string
+  total: string
+  orderId: string
 }
 
 interface Props {
@@ -29,24 +32,17 @@ const HistoryPage: NextPage<Props> = ({ orders }) => {
   const [deleting, setDeleting] = useState(false)
   const router = useRouter()
 
-  const deleteOrder = async (orderId: string): Promise<void> => {
-    setDeleting(true)
-    try {
-      await anyShopApi.delete<IOrder>(`/orders/${orderId}`)
-      void router.replace(router.asPath)
-    } catch (error) {
-      console.error(error)
-    }
-    setDeleting(false)
-  }
   const columns: GridColDef[] = [
-    { field: 'id', headerName: '', width: 100 },
-    { field: 'fullName', headerName: 'Full Name', width: 300 },
+    { field: 'id', headerName: 'Order id', minWidth: 250 },
+    { field: 'fullName', headerName: 'Full Name', minWidth: 200 },
     {
       field: 'paid',
       headerName: 'Paid',
       description: 'Show information if the order is paid"',
-      width: 200,
+      minWidth: 100,
+      flex: 1,
+      align: 'center',
+      headerAlign: 'center',
       renderCell: (params) => {
         return (params.row.paid as boolean) ? (
           <Chip color="secondary" label="Paid" variant="outlined" />
@@ -56,14 +52,25 @@ const HistoryPage: NextPage<Props> = ({ orders }) => {
       },
     },
     {
+      field: 'total',
+      headerName: 'Total',
+      minWidth: 100,
+      align: 'right',
+      headerAlign: 'right',
+    },
+
+    {
       field: 'actions',
       headerName: 'Actions',
-      width: 200,
+      minWidth: 250,
+      flex: 1,
+      align: 'right',
+      headerAlign: 'right',
       sortable: false,
       renderCell: (params: GridRenderCellParams) => {
         return (
           <Box display="flex" gap={2}>
-            <NextLink target="_blank" href={`/order/${params.row.orderId}`}>
+            <NextLink href={`/order/${params.row.orderId}`}>
               <Link component="span" underline="hover">
                 View order
               </Link>
@@ -87,13 +94,25 @@ const HistoryPage: NextPage<Props> = ({ orders }) => {
   ]
 
   const rows: GridRowsProp<Row> = orders.map(
-    ({ isPaid, address, _id }, idx) => ({
-      id: idx + 1,
+    ({ isPaid, address, _id, total }) => ({
+      id: _id?.toUpperCase() ?? '',
       paid: isPaid,
       fullName: `${address.firstName} ${address.lastName}`,
-      orderId: _id,
+      total: toCurrency(total),
+      orderId: _id ?? '',
     }),
   )
+
+  const deleteOrder = async (orderId: string): Promise<void> => {
+    setDeleting(true)
+    try {
+      await anyShopApi.delete(`/orders/${orderId}`)
+      void router.replace(router.asPath)
+    } catch (error) {
+      console.error(error)
+    }
+    setDeleting(false)
+  }
 
   return (
     <ShopLayout title="Order History" pageDescription="Order history">

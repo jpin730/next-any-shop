@@ -1,5 +1,7 @@
+import { anyShopApi } from '@/api/anyShopApi'
 import { CartList } from '@/components/cart/CartList'
 import { OrderSummary } from '@/components/cart/OrderSummary'
+import { FullScreenLoading } from '@/components/shared/FullScreenLoading'
 import { ShopLayout } from '@/components/shared/ShopLayout'
 import { getOrderById } from '@/database/helpers/orders'
 import { type IOrder } from '@/interfaces/IOrder'
@@ -16,6 +18,8 @@ import {
   Typography,
 } from '@mui/material'
 import { type GetServerSideProps, type NextPage } from 'next'
+import { useRouter } from 'next/router'
+import { useState } from 'react'
 
 interface Props {
   order: IOrder
@@ -28,33 +32,43 @@ const OrderPage: NextPage<Props> = ({ order }) => {
     isPaid,
     numberOfItems,
     orderItems,
+    paidAt,
     subTotal,
     tax,
     total,
   } = order
 
-  return (
-    <ShopLayout title="Order #1234567" pageDescription="Order summary">
-      <Typography variant="h1" sx={{ mb: 3 }}>
-        Order {_id}
-      </Typography>
+  const [paying, setPaying] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+  const router = useRouter()
 
-      {isPaid ? (
-        <Chip
-          sx={{ mb: 3 }}
-          label="Order paid"
-          variant="outlined"
-          color="secondary"
-          icon={<CreditScoreOutlined />}
-        />
-      ) : (
-        <Chip
-          sx={{ mb: 3 }}
-          label="Pending payment"
-          variant="outlined"
-          icon={<CreditCardOffOutlined />}
-        />
-      )}
+  const payOrder = async (): Promise<void> => {
+    setPaying(true)
+    try {
+      await anyShopApi.put(`/orders/${_id}`)
+      void router.replace(router.asPath)
+      setErrorMessage('')
+    } catch (error) {
+      console.error(error)
+      setErrorMessage('Error paying order. Try again later.')
+    }
+    setTimeout(() => {
+      setPaying(false)
+    }, 1000)
+  }
+
+  if (paying) {
+    return <FullScreenLoading />
+  }
+
+  return (
+    <ShopLayout
+      title={`Order ${_id?.toUpperCase()}`}
+      pageDescription="Order summary"
+    >
+      <Typography variant="h1" sx={{ mb: 3 }}>
+        Order {_id?.toUpperCase()}
+      </Typography>
 
       <Grid container columnSpacing={2}>
         <Grid item xs={12} md={8}>
@@ -96,12 +110,58 @@ const OrderPage: NextPage<Props> = ({ order }) => {
                 orderValues={{ numberOfItems, subTotal, total, tax }}
               />
 
+              <Box sx={{ mt: 2 }} display="flex" flexDirection="column">
+                {isPaid ? (
+                  <Chip
+                    label="Order paid"
+                    variant="outlined"
+                    color="secondary"
+                    icon={<CreditScoreOutlined />}
+                  />
+                ) : (
+                  <Chip
+                    label="Pending payment"
+                    variant="outlined"
+                    icon={<CreditCardOffOutlined />}
+                  />
+                )}
+              </Box>
+
               {!isPaid && (
-                <Box sx={{ mt: 2 }}>
-                  <Button color="secondary" className="circular-btn" fullWidth>
+                <Box sx={{ mt: 2 }} display="flex" flexDirection="column">
+                  <Button
+                    color="secondary"
+                    className="circular-btn"
+                    fullWidth
+                    onClick={() => {
+                      void payOrder()
+                    }}
+                  >
                     Pay order
                   </Button>
+
+                  <Chip
+                    color="error"
+                    variant="outlined"
+                    label={errorMessage}
+                    sx={{
+                      display: errorMessage.length > 0 ? 'flex' : 'none',
+                      mt: 2,
+                    }}
+                  />
                 </Box>
+              )}
+
+              {isPaid && paidAt != null && (
+                <Typography
+                  display="block"
+                  variant="caption"
+                  color="GrayText"
+                  textAlign="center"
+                  sx={{ mt: 2 }}
+                >
+                  Paid at: {new Date(paidAt).toLocaleString()}
+                </Typography>
               )}
             </CardContent>
           </Card>
