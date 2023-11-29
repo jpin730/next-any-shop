@@ -6,7 +6,6 @@ import {
   useMemo,
   useCallback,
 } from 'react'
-import AccountCircle from '@mui/icons-material/AccountCircle'
 import AdminPanelSettings from '@mui/icons-material/AdminPanelSettings'
 import Box from '@mui/material/Box'
 import Category from '@mui/icons-material/Category'
@@ -57,11 +56,6 @@ export const SideMenu: FC = () => {
 
   const navItems = useMemo<NavItem[]>(
     () => [
-      {
-        text: 'Profile',
-        icon: <AccountCircle />,
-        hidden: !isLoggedIn,
-      },
       {
         text: 'My orders',
         icon: <ConfirmationNumber />,
@@ -117,16 +111,25 @@ export const SideMenu: FC = () => {
         text: 'Products',
         icon: <Category />,
         hidden: user?.role !== 'admin',
+        action: () => {
+          navigateTo('/admin/products')
+        },
       },
       {
         text: 'Orders',
         icon: <ConfirmationNumber />,
         hidden: user?.role !== 'admin',
+        action: () => {
+          navigateTo('/admin/orders')
+        },
       },
       {
         text: 'Users',
         icon: <AdminPanelSettings />,
         hidden: user?.role !== 'admin',
+        action: () => {
+          navigateTo('/admin/users')
+        },
       },
       {
         text: user?.email ?? '',
