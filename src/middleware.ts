@@ -35,7 +35,10 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
     }
   }
 
-  if (request.nextUrl.pathname.startsWith('/admin')) {
+  if (
+    request.nextUrl.pathname.startsWith('/admin') ||
+    request.nextUrl.pathname.startsWith('/api/admin')
+  ) {
     try {
       const token = request.cookies.get('token')?.value ?? ''
       const { payload } = await jwtVerify(
@@ -51,6 +54,11 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
       return NextResponse.next()
     } catch (error) {
       console.error(error)
+
+      if (request.nextUrl.pathname.startsWith('/api')) {
+        return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
+      }
+
       const url = request.nextUrl.clone()
       url.pathname = '/'
       return NextResponse.redirect(url)
