@@ -33,7 +33,7 @@ import { AuthContext } from '@/context/auth/AuthProvider'
 
 interface NavItem {
   text: string
-  action?: () => void // TODO: make required
+  action?: () => void
   icon?: ReactNode
   responsive?: true
   subheader?: true

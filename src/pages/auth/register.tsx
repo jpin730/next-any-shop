@@ -31,9 +31,7 @@ const RegisterPage: NextPage = () => {
     handleSubmit,
     register,
     formState: { errors },
-  } = useForm<RegisterFormData>({
-    defaultValues: { email: 'user1@email.com', password: '123456', name: 'JP' }, // TODO: Remove this line
-  })
+  } = useForm<RegisterFormData>()
 
   const [showError, setShowError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')

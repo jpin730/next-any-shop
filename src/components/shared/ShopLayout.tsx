@@ -2,6 +2,7 @@ import Head from 'next/head'
 import { type FC } from 'react'
 import { Navbar } from './Navbar'
 import { SideMenu } from './SideMenu'
+import { Typography } from '@mui/material'
 
 interface Props {
   title: string
@@ -46,7 +47,11 @@ export const ShopLayout: FC<Props> = ({
         {children}
       </main>
 
-      <footer>{/* TODO: footer */}</footer>
+      <footer>
+        <Typography align="center" pb={2}>
+          Jaime Pineda &copy; 2023
+        </Typography>
+      </footer>
     </>
   )
 }
