@@ -1,5 +1,6 @@
 import { connect, disconnect } from '@/database/connect'
 import { type IUser } from '@/interfaces/IUser'
+import { Order } from '@/models/Order'
 import { User } from '@/models/User'
 import { isValidObjectId } from 'mongoose'
 import { type NextApiRequest, type NextApiResponse } from 'next'
@@ -55,6 +56,7 @@ const deleteUser = async (
     }
 
     await connect()
+    await Order.deleteMany({ user: id })
     const user = await User.findByIdAndDelete(id)
     await disconnect()
 
