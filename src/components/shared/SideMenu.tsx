@@ -8,7 +8,6 @@ import {
 } from 'react'
 import AdminPanelSettings from '@mui/icons-material/AdminPanelSettings'
 import Box from '@mui/material/Box'
-import Category from '@mui/icons-material/Category'
 import ConfirmationNumber from '@mui/icons-material/ConfirmationNumber'
 import Divider from '@mui/material/Divider'
 import Drawer from '@mui/material/Drawer'
@@ -106,14 +105,6 @@ export const SideMenu: FC = () => {
         text: 'Admin Panel',
         subheader: true,
         hidden: user?.role !== 'admin',
-      },
-      {
-        text: 'Products',
-        icon: <Category />,
-        hidden: user?.role !== 'admin',
-        action: () => {
-          navigateTo('/admin/products')
-        },
       },
       {
         text: 'Orders',
