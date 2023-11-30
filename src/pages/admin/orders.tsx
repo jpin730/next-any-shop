@@ -46,7 +46,7 @@ const AdminOrdersPage: NextPage = () => {
       headerName: '',
       width: 250,
       renderCell: ({ row }) => (
-        <NextLink href={`/order/${row.id}`}>
+        <NextLink href={`/admin/order/${row.id}`}>
           <Link component="span" underline="always">
             {row.id}
           </Link>
