@@ -3,16 +3,13 @@ import { SizeSelector } from '@/components/products/SIzeSelector'
 import { ItemCounter } from '@/components/shared/ItemCounter'
 import { ShopLayout } from '@/components/shared/ShopLayout'
 import { CartContext } from '@/context/cart/CartProvider'
-import {
-  getAllProductSlugs,
-  getProductBySlug,
-} from '@/database/helpers/products'
+import { getProductBySlug } from '@/database/helpers/products'
 import { type ICartProduct } from '@/interfaces/ICartProduct'
 import { type IProductSize, type IProduct } from '@/interfaces/IProduct'
 import { type ProductSlug } from '@/interfaces/ProductSlug'
 import { toCurrency } from '@/utils/toCurrency'
 import { Box, Button, Chip, Grid, Typography } from '@mui/material'
-import { type GetStaticPaths, type GetStaticProps, type NextPage } from 'next'
+import { type GetServerSideProps, type NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useContext, useState } from 'react'
 
@@ -122,20 +119,7 @@ const ProductPage: NextPage<Props> = ({ product }) => {
   )
 }
 
-export const getStaticPaths: GetStaticPaths = async (ctx) => {
-  const productSlugs = await getAllProductSlugs()
-
-  return {
-    paths: productSlugs.map(({ slug }) => ({
-      params: {
-        slug,
-      },
-    })),
-    fallback: 'blocking',
-  }
-}
-
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const { slug = '' } = params as unknown as ProductSlug
   const product = await getProductBySlug(slug)
 
@@ -152,7 +136,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     props: {
       product,
     },
-    revalidate: 60 * 60 * 24,
   }
 }
 
